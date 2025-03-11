@@ -1,0 +1,45 @@
+{
+    "env": {
+        "myIncludePath": [
+            "${workspaceFolder}/include",
+            "${workspaceFolder}/src"
+        ],
+        "myDefines": []
+    },
+    "configurations": [
+        {
+            "name": "Linux",
+            "compilerPath": "/usr/bin/gcc",
+            "compilerArgs": [
+                "-m64"
+            ],
+            "intelliSenseMode": "linux-gcc-x64",
+            "includePath": [
+                "${myIncludePath}",
+                "/usr/include",
+                "${workspaceFolder}"
+            ],
+            "defines": [
+                "${myDefines}"
+            ],
+            "cStandard": "c99",
+            "cppStandard": "c++14",
+            "configurationProvider": "ms-vscode.cmake-tools",
+            "forcedInclude": [
+                "${workspaceFolder}/common/common.h"
+            ],
+            "compileCommands": "${workspaceFolder}/build/compile_commands.json",
+            "browse": {
+                "path": [
+                    "${myIncludePath}",
+                    "/usr/include",
+                    "${workspaceFolder}"
+                ],
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": "${workspaceFolder}/.vscode/browse.vc.db"
+            }
+        }
+    ],
+    "version": 4,
+    "enableConfigurationSquiggles": true
+}
