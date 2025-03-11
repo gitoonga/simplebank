@@ -34,13 +34,23 @@ void AssocArrayPut(AssocArray *a, const char *key, void *value)
 
   while (current)
   {
-    if (strcomp(current->key, key) == 0)
+    if (strcmp(current->key, key) == 0)
     {
       current->value = value;
       return;
     }
     current = current->next;
   }
+
+  kv *newkv = (kv *)malloc(sizeof(kv));
+  if (!newkv)
+    return;
+
+  newkv->key = strdup(key);
+  newkv->value = value;
+  newkv->next = a->table[index];
+  a->table[index] = newkv;
+  a->size++;
 }
 
 void *AssocArrayGet(AssocArray *a, const char *key)

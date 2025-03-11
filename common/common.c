@@ -1,6 +1,4 @@
 #include "common.h"
-#include <stddef.h>
-#include <regex.h>
 
 char fgetsNULLEStr(char *string, size_t size)
 {
@@ -14,7 +12,7 @@ char fgetsNULLEStr(char *string, size_t size)
     return *string;
 }
 
-int parseAccountData(char *JsonText)
+int parseAccountData(char *JsonText, AssocArray *pArr)
 {
     regex_t regex_keys;
     regex_t regex_values;
@@ -37,7 +35,7 @@ int parseAccountData(char *JsonText)
     }
 
     const char *searchString = JsonText;
-    int key_count = 0;
+    // int key_count = 0;
 
     while (1)
     {
@@ -77,12 +75,11 @@ int parseAccountData(char *JsonText)
         strncpy(value, searchString + vmatches[1].rm_so, value_len);
         value[value_len] = '\0';
 
-        printf("Found key %d: %s => %s\n", ++key_count, key, value);
+        // printf("Found key %d: %s => %s\n", ++key_count, key, value);
 
         searchString += vmatches[0].rm_eo;
 
-        free(key);
-        free(value);
+        AssocArrayPut(pArr, key, value);
     }
 
     regfree(&regex_keys);

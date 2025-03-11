@@ -57,9 +57,14 @@ int transferMoney(Transfer *transfer)
     fclose(RaccountFile);
     fclose(SaccountFile);
 
-    parseAccountData(Rejsontext);
+    AssocArray *RArr = assocArrayCreate();
+    AssocArray *SArr = assocArrayCreate();
+    parseAccountData(Rejsontext, RArr);
     printf("------------------------------------\n");
-    parseAccountData(Sejsontext);
+    parseAccountData(Sejsontext, SArr);
+
+    void *phoneValue = AssocArrayGet(RArr, "phone");
+    printf("Phone: %s\n", (char *)phoneValue);
 
     // printf("Receipient %s \n", Rejsontext);
     // printf("Sender %s \n", Sejsontext);

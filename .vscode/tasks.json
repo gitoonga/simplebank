@@ -16,6 +16,7 @@
                 "src/main.c",
                 "src/account.c",
                 "common/common.c",
+                "common/aa.c",
                 "common/common.h",
             ],
             "group": {
