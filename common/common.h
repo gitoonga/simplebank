@@ -1,4 +1,3 @@
-// common.h
 #define _POSIX_C_SOURCE 200809L
 
 #ifndef _COMMON_H
@@ -58,10 +57,13 @@ typedef struct
 char fgetsNULLEStr(char *string, size_t size);
 int createAccount(Holder *holder);
 int transferMoney(Transfer *transfer);
-int parseAccountData(char *JsonText, AssocArray *pArr);
+Holder *parseAccountData(char *JsonText);
+void buildHolderInfo(Holder *HolderInfo, const char *key, const char *value);
 char *parseAccountText(FILE *accountFile, char *accountText, size_t max_size);
 void writeAccountJson(FILE *userFile, Holder *Holder);
+void writeEmptyAccountJson(FILE *userFile);
 char *getCurrentTime();
+char *removeQ(const char *str);
 unsigned int hash(const char *key);
 AssocArray *assocArrayCreate();
 void AssocArrayPut(AssocArray *a, const char *key, void *value);

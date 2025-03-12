@@ -12,7 +12,7 @@ char fgetsNULLEStr(char *string, size_t size)
     return *string;
 }
 
-int parseAccountData(char *JsonText, AssocArray *pArr)
+Holder *parseAccountData(char *JsonText)
 {
     regex_t regex_keys;
     regex_t regex_values;
@@ -20,7 +20,7 @@ int parseAccountData(char *JsonText, AssocArray *pArr)
     regmatch_t vmatches[2];
 
     // AccountInfo *accInfo = sizeof(AccountInfo);
-    // Holder *HolderInfo = malloc(sizeof(Holder));
+    Holder *HolderInfo = malloc(sizeof(Holder));
 
     const char *key_pattern = "\"([^\"]+)\":";
     const char *value_pattern = ": *\"([^\"]+)\",";
@@ -31,7 +31,7 @@ int parseAccountData(char *JsonText, AssocArray *pArr)
     if (regvk != 0 || regvv != 0)
     {
         printf("Error compiling regex patterns\n");
-        return -1;
+        return NULL;
     }
 
     const char *searchString = JsonText;
@@ -79,12 +79,74 @@ int parseAccountData(char *JsonText, AssocArray *pArr)
 
         searchString += vmatches[0].rm_eo;
 
-        AssocArrayPut(pArr, key, value);
+        buildHolderInfo(HolderInfo, key, value);
+
+        free(key);
+        free(value);
     }
 
     regfree(&regex_keys);
     regfree(&regex_values);
-    return 0;
+    return HolderInfo;
+}
+
+void buildHolderInfo(Holder *HolderInfo, const char *key, const char *value)
+{
+
+    char *nqkey = removeQ(key);
+
+    if (strcmp(nqkey, "id") == 0)
+    {
+        HolderInfo->id = atoi(value);
+    }
+    else if (strcmp(nqkey, "phone") == 0)
+    {
+        strncpy(HolderInfo->phone, value, sizeof(HolderInfo->phone) - 1);
+    }
+    else if (strcmp(nqkey, "first_name") == 0)
+    {
+        strncpy(HolderInfo->fname, value, sizeof(HolderInfo->fname) - 1);
+    }
+    else if (strcmp(nqkey, "last_name") == 0)
+    {
+        strncpy(HolderInfo->lname, value, sizeof(HolderInfo->lname) - 1);
+    }
+    else if (strcmp(nqkey, "residence") == 0)
+    {
+        strncpy(HolderInfo->residence, value, sizeof(HolderInfo->residence) - 1);
+    }
+    else if (strcmp(nqkey, "balance") == 0)
+    {
+        strncpy(HolderInfo->balance, value, sizeof(HolderInfo->balance) - 1);
+    }
+    else if (strcmp(nqkey, "date") == 0)
+    {
+        strncpy(HolderInfo->date, value, sizeof(HolderInfo->date) - 1);
+    }
+
+    free(nqkey);
+}
+
+char *removeQ(const char *str)
+{
+    int i, j = 0;
+    int len = strlen(str);
+    char *newstr = (char *)malloc(sizeof(len + 1));
+
+    if (newstr == NULL)
+        return NULL;
+
+    for (i = 0; i < len; i++)
+    {
+        if (str[i] != '"' && str[i] != '/')
+        {
+            newstr[j++] = str[i];
+        }
+    }
+
+    newstr[j] = '\0';
+
+    return newstr;
 }
 
 char *parseAccountText(FILE *accountFile, char *accountText, size_t max_size)
@@ -140,4 +202,9 @@ void writeAccountJson(FILE *userFile, Holder *Holder)
     fprintf(userFile, "  \"balance\": \"%d\",\n", 0);
     fprintf(userFile, "  \"date\": \"%s\"\n", dtm);
     fprintf(userFile, "}\n");
+}
+
+void writeEmptyAccountJson(FILE *userFile)
+{
+    fprintf(userFile, "/0");
 }
