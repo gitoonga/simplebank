@@ -36,7 +36,8 @@ typedef struct
     char lname[20];
     char residence[50];
     char balance[10];
-    char date[20];
+    char date_created[27];
+    char date_updated[27];
 } Holder;
 
 typedef struct

@@ -23,8 +23,11 @@ Holder *parseAccountData(char *JsonText)
     Holder *HolderInfo = malloc(sizeof(Holder));
 
     const char *key_pattern = "\"([^\"]+)\":";
-    const char *value_pattern = ": *\"([^\"]+)\",";
-
+    const char *value_pattern = ": *\"([^\"]+)\"";
+    // Removed the trailing comma from the regex so it matches the last key-value pair.
+    // The old pattern missed the "date" key because it expected a comma after the value.
+    // Regex Would fail when parsing the last key-value pair in the JSON
+    // Since the last pair typically doesn't have a trailing comma
     int regvk = regcomp(&regex_keys, key_pattern, REG_EXTENDED);
     int regvv = regcomp(&regex_values, value_pattern, REG_EXTENDED);
 
@@ -119,9 +122,14 @@ void buildHolderInfo(Holder *HolderInfo, const char *key, const char *value)
     {
         strncpy(HolderInfo->balance, value, sizeof(HolderInfo->balance) - 1);
     }
-    else if (strcmp(nqkey, "date") == 0)
+    else if (strcmp(nqkey, "date_created") == 0)
     {
-        strncpy(HolderInfo->date, value, sizeof(HolderInfo->date) - 1);
+        strncpy(HolderInfo->date_created, value, sizeof(HolderInfo->date_created) - 1);
+    }
+    else if (strcmp(nqkey, "date_updated") == 0)
+    {
+        const char *dtm = getCurrentTime();
+        strncpy(HolderInfo->date_updated, dtm, sizeof(HolderInfo->date_updated) - 1);
     }
 
     free(nqkey);
@@ -192,15 +200,15 @@ char *getCurrentTime()
 
 void writeAccountJson(FILE *userFile, Holder *Holder)
 {
-    const char *dtm = getCurrentTime();
     fprintf(userFile, "{\n");
     fprintf(userFile, "  \"id\": \"%d\",\n", Holder->id);
     fprintf(userFile, "  \"first_name\": \"%s\",\n", Holder->fname);
     fprintf(userFile, "  \"last_name\": \"%s\",\n", Holder->lname);
     fprintf(userFile, "  \"phone\": \"%s\",\n", Holder->phone);
     fprintf(userFile, "  \"residence\": \"%s\",\n", Holder->residence);
-    fprintf(userFile, "  \"balance\": \"%d\",\n", 0);
-    fprintf(userFile, "  \"date\": \"%s\"\n", dtm);
+    fprintf(userFile, "  \"balance\": \"%s\",\n", Holder->balance);
+    fprintf(userFile, "  \"date_created\": \"%s\",\n", Holder->date_created);
+    fprintf(userFile, "  \"date_updated\": \"%s\"\n", Holder->date_updated);
     fprintf(userFile, "}\n");
 }
 

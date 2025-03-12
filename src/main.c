@@ -44,8 +44,11 @@ int cuser()
     fgetsNULLEStr(HolderInfo->residence, sizeof(HolderInfo->residence));
 
     srand(time(NULL));
+    const char *dtm = getCurrentTime();
 
     HolderInfo->id = rand();
+    strcpy(HolderInfo->date_created, dtm);
+    strcpy(HolderInfo->date_updated, dtm);
 
     createAccount(HolderInfo);
 

@@ -39,7 +39,6 @@ int transferMoney(Transfer *transfer)
 
     FILE *RaccountFile;
     FILE *SaccountFile;
-    FILE *TaccountFile;
 
     snprintf(rfilepath, sizeof(rfilepath), "accounts/%d/%d.json", transfer->receipientAcc, transfer->receipientAcc);
     snprintf(sfilepath, sizeof(sfilepath), "accounts/%d/%d.json", transfer->senderAcc, transfer->senderAcc);
@@ -66,7 +65,7 @@ int transferMoney(Transfer *transfer)
     int rbal = atoi(RcInfo->balance);
     int sbal = atoi(SnInfo->balance);
 
-    if (sbal < transfer->amount || (sbal - rbal < 0))
+    if (sbal < transfer->amount || (sbal - rbal) < 0)
     {
         printf("Cannot Transfer Cash. Sender balance is insufficient %d", sbal);
         return -8;
@@ -86,9 +85,12 @@ int transferMoney(Transfer *transfer)
     strncpy(SnInfo->balance, sbalStr, sizeof(SnInfo->balance) - 1);
     SnInfo->balance[sizeof(SnInfo->balance) - 1] = '\0';
 
-    TaccountFile = fopen(tfilepath, "w");
-    // writeEmptyAccountJson(TaccountFile);
-    writeAccountJson(TaccountFile, RcInfo);
+    RaccountFile = fopen(rfilepath, "w");
+    SaccountFile = fopen(sfilepath, "w");
+    writeAccountJson(RaccountFile, RcInfo);
+    writeAccountJson(SaccountFile, SnInfo);
+    fclose(RaccountFile);
+    fclose(SaccountFile);
 
     free(RcInfo);
     free(SnInfo);
